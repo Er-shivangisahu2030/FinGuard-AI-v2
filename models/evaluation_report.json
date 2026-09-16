@@ -1,0 +1,77 @@
+{
+  "classification_report": {
+    "ACCOUNT_ISSUE": {
+      "precision": 0.7708333333333334,
+      "recall": 0.8314606741573034,
+      "f1-score": 0.8,
+      "support": 178.0
+    },
+    "CARD_FRAUD": {
+      "precision": 0.9682539682539683,
+      "recall": 0.8356164383561644,
+      "f1-score": 0.8970588235294118,
+      "support": 73.0
+    },
+    "FAKE_KYC": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 60.0
+    },
+    "OTHER": {
+      "precision": 0.8054474708171206,
+      "recall": 0.8922413793103449,
+      "f1-score": 0.8466257668711656,
+      "support": 232.0
+    },
+    "OTP_SCAM": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 60.0
+    },
+    "PAYMENT_FAILURE": {
+      "precision": 0.9259259259259259,
+      "recall": 0.8928571428571429,
+      "f1-score": 0.9090909090909091,
+      "support": 84.0
+    },
+    "PHISHING": {
+      "precision": 0.9135802469135802,
+      "recall": 0.8043478260869565,
+      "f1-score": 0.8554913294797688,
+      "support": 92.0
+    },
+    "REFUND_ISSUE": {
+      "precision": 0.7888888888888889,
+      "recall": 0.8554216867469879,
+      "f1-score": 0.8208092485549133,
+      "support": 83.0
+    },
+    "UNAUTHORIZED_TRANSACTION": {
+      "precision": 0.9726027397260274,
+      "recall": 0.7473684210526316,
+      "f1-score": 0.8452380952380952,
+      "support": 95.0
+    },
+    "UPI_FRAUD": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 60.0
+    },
+    "accuracy": 0.872173058013766,
+    "macro avg": {
+      "precision": 0.9145532573858846,
+      "recall": 0.8859313568567533,
+      "f1-score": 0.8974314172764263,
+      "support": 1017.0
+    },
+    "weighted avg": {
+      "precision": 0.8795052947797665,
+      "recall": 0.872173058013766,
+      "f1-score": 0.872955847969724,
+      "support": 1017.0
+    }
+  }
+}

@@ -1,0 +1,10 @@
+from app.database.connection import get_db_connection, create_database
+
+def create_all_tables():
+    create_database(); c=get_db_connection(); cur=c.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS complaints(id INT AUTO_INCREMENT PRIMARY KEY, complaint_id VARCHAR(100) UNIQUE NOT NULL, complaint_text TEXT NOT NULL, category VARCHAR(100), transaction_amount DECIMAL(15,2) DEFAULT 0, payment_method VARCHAR(50), unauthorized_transaction BOOLEAN DEFAULT FALSE, severity INT DEFAULT 1, sentiment VARCHAR(50), risk_score INT, risk_level VARCHAR(20), priority VARCHAR(20), assigned_team VARCHAR(150), escalation_required BOOLEAN DEFAULT FALSE, human_review_required BOOLEAN DEFAULT FALSE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS scam_indicators(id INT AUTO_INCREMENT PRIMARY KEY, complaint_id VARCHAR(100) NOT NULL, indicator_code VARCHAR(100) NOT NULL, indicator_name VARCHAR(150), matched_keywords TEXT, indicator_score INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(complaint_id) REFERENCES complaints(complaint_id) ON DELETE CASCADE)""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS complaint_guidance(id INT AUTO_INCREMENT PRIMARY KEY, complaint_id VARCHAR(100) NOT NULL, guidance_text TEXT NOT NULL, guidance_order INT DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(complaint_id) REFERENCES complaints(complaint_id) ON DELETE CASCADE)""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS feedback(id INT AUTO_INCREMENT PRIMARY KEY, complaint_id VARCHAR(100) NOT NULL, predicted_category VARCHAR(100), corrected_category VARCHAR(100), reviewer_decision VARCHAR(50), reviewer_comment TEXT, is_used_for_training BOOLEAN DEFAULT FALSE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(complaint_id) REFERENCES complaints(complaint_id) ON DELETE CASCADE)""")
+    c.commit(); cur.close(); c.close(); print("All tables ready.")
+if __name__=="__main__": create_all_tables()

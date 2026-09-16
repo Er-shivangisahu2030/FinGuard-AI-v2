@@ -1,0 +1,17 @@
+pandas
+numpy
+scikit-learn
+spacy
+fastapi
+uvicorn
+streamlit
+mysql-connector-python
+plotly
+joblib
+python-dotenv
+pydantic
+requests
+matplotlib
+seaborn
+jupyter
+pytest

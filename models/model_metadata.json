@@ -1,0 +1,48 @@
+{
+  "model_name": "Linear SVM",
+  "task": "Complaint Category Classification",
+  "feature": "clean_text",
+  "vectorizer": "TF-IDF",
+  "ngram_range": [
+    1,
+    2
+  ],
+  "training_rows": 4066,
+  "testing_rows": 1017,
+  "metrics": [
+    {
+      "model": "Linear SVM",
+      "accuracy": 0.8722,
+      "precision": 0.8795,
+      "recall": 0.8722,
+      "f1_score": 0.873
+    },
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.8702,
+      "precision": 0.8802,
+      "recall": 0.8702,
+      "f1_score": 0.8709
+    },
+    {
+      "model": "Multinomial Naive Bayes",
+      "accuracy": 0.8358,
+      "precision": 0.8771,
+      "recall": 0.8358,
+      "f1_score": 0.8392
+    }
+  ],
+  "categories": [
+    "ACCOUNT_ISSUE",
+    "CARD_FRAUD",
+    "FAKE_KYC",
+    "OTHER",
+    "OTP_SCAM",
+    "PAYMENT_FAILURE",
+    "PHISHING",
+    "REFUND_ISSUE",
+    "UNAUTHORIZED_TRANSACTION",
+    "UPI_FRAUD"
+  ],
+  "dataset_source": "Hybrid: CFPB real complaint narratives + synthetic India-specific digital-payment scenarios"
+}
