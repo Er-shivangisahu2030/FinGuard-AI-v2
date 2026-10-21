@@ -1,255 +1,58 @@
-# FinGuard AI v2
 
-FinGuard AI is an end-to-end financial complaint intelligence and risk-assessment prototype. It combines publicly available CFPB complaint narratives with synthetic India-specific digital-payment scenarios. The system classifies complaint text, detects scam indicators, calculates an explainable risk score, routes cases to support teams, stores complaints in MySQL, and supports human verification with model versioning and retraining.
+# FinGuard AI v2: Financial Complaint Intelligence and Risk Assessment
 
-## What changed in v2
+## Project Overview
 
-- Uses a **hybrid dataset** instead of a fully synthetic dataset.
-- Includes **2,083 CFPB complaint narratives** from the uploaded source file.
-- Adds **3,000 synthetic scenarios** to cover UPI, OTP, KYC, phishing and other India-specific cases that are not well represented in the CFPB sample.
-- Final working dataset: **5,083 records**.
-- Adds a `source` field: `REAL_CFPB` or `SYNTHETIC`.
-- Compares Logistic Regression, Linear SVM and Multinomial Naive Bayes using TF-IDF.
-- Current evaluation on the held-out test set is about **87.4% accuracy / 0.875 weighted F1** for the selected Linear SVM. These metrics are for this hybrid dataset only and are not production fraud-detection performance.
-- Adds human verification and **versioned retraining**. A customer complaint is not automatically treated as a training label. Only a verified reviewer label can enter the retraining pool.
+FinGuard AI is a financial complaint analysis system designed to help support teams understand customer complaints, identify possible scam indicators, assess risk, and direct cases to the appropriate team.
 
-## Architecture
+The project uses a combination of real consumer complaint narratives from the CFPB Consumer Complaint Database and synthetic scenarios based on Indian digital payment issues. The synthetic data covers cases such as UPI fraud, OTP scams, fake KYC messages, phishing, card fraud, and failed transactions.
 
-```text
-Real CFPB complaints + Synthetic India-specific scenarios
-                         |
-                         v
-                  Clean + label data
-                         |
-                         v
-                   spaCy preprocessing
-                         |
-                         v
-                  TF-IDF (1-2 grams)
-                         |
-              +----------+----------+
-              |          |          |
-              v          v          v
-             LR         SVM         NB
-              +----------+----------+
-                         |
-                         v
-                  Complaint category
-                         |
-              +----------+----------+
-              |          |          |
-              v          v          v
-        Scam indicators Risk engine Guidance
-                         |
-                         v
-                      Routing
-                         |
-                         v
-                       MySQL
-                         |
-                 Support dashboard
-                         |
-                  Human verification
-                         |
-                         v
-                 Verified training data
-                         |
-                         v
-                Versioned retraining
-```
+The system uses Natural Language Processing (NLP) and machine learning to classify complaints, while a rule-based risk engine calculates an explainable risk score. It also stores complaint records in MySQL and provides dashboards for customers and support teams. A human verification process allows reviewers to correct predictions and contribute verified labels to future model training.
 
-## Dataset
+## Key Features
 
-The included working dataset is `data/raw/complaints_hybrid.csv`.
+- **Hybrid dataset:** Combines 2,083 real CFPB complaint narratives with 3,000 synthetic scenarios, giving a total of 5,083 records.
+- **Complaint classification:** Uses TF-IDF features and compares Logistic Regression, Linear SVM, and Multinomial Naive Bayes to identify complaint categories.
+- **Scam indicator detection:** Checks complaint details for warning signs associated with scams and suspicious transactions.
+- **Risk assessment:** Calculates a risk score using relevant complaint and transaction details, helping support teams prioritize cases.
+- **Complaint routing:** Directs complaints to the appropriate support team based on their category and risk level.
+- **Database management:** Stores complaint records and related information in MySQL.
+- **Support dashboard:** Helps reviewers view complaints, examine risk levels, and monitor complaint trends.
+- **Human verification:** Allows reviewers to confirm or correct model predictions before feedback is used for retraining.
+- **Model versioning:** Keeps track of trained models and supports controlled updates using verified feedback.
 
-### Real source
+## Dataset and Model Evaluation
 
-The real portion comes from the CFPB Consumer Complaint Database. The supplied source file contains 100,000 rows, but only 2,083 rows contain usable complaint narratives after filtering. Those narrative records are retained for the hybrid dataset.
+The working dataset contains 5,083 records. Of these, 2,083 are real complaint narratives from the supplied CFPB dataset, while the remaining 3,000 are synthetic scenarios created to cover India-specific financial issues.
 
-### Synthetic portion
+The project compares three machine learning algorithms using TF-IDF features. The selected Linear SVM model achieved approximately **87.4% accuracy and a weighted F1-score of 0.875** on the held-out test set.
 
-Synthetic records supplement gaps in the public sample, especially:
+These results apply only to the project's hybrid dataset. They should not be interpreted as evidence of real-world fraud detection accuracy.
 
-- UPI fraud
-- OTP scams
-- fake KYC messages
-- phishing
-- card fraud
-- unauthorized transactions
-- refund issues
-- payment failures
-- account access problems
-- other support cases
+## Technology Stack
 
-Synthetic records are explicitly marked with `source=SYNTHETIC`. They are not presented as real customer complaints.
+- **Programming Language:** Python
+- **NLP:** spaCy, TF-IDF
+- **Machine Learning:** Scikit-learn, Logistic Regression, Linear SVM, Multinomial Naive Bayes
+- **Backend:** FastAPI, Pydantic
+- **Frontend:** Streamlit
+- **Database:** MySQL
+- **Data Processing:** Pandas, NumPy
+- **Model Management:** Versioned model files and verified-feedback retraining workflow
 
-## Final dataset columns
+## How the System Works
 
-| Column | Purpose |
-|---|---|
-| `complaint_id` | Unique complaint identifier |
-| `complaint_text` | Main NLP input |
-| `category` | FinGuard ML target |
-| `product` | Financial product/source context |
-| `issue` | Original or synthetic issue |
-| `sub_issue` | Detailed issue |
-| `transaction_amount` | Risk-engine input |
-| `payment_method` | Risk-engine/context field |
-| `unauthorized_transaction` | Risk signal |
-| `severity` | Risk signal |
-| `sentiment` | Supporting context |
-| `source` | `REAL_CFPB` or `SYNTHETIC` |
-| `created_at` | Record date |
+1. A customer submits a financial complaint through the application.
+2. The system cleans the complaint text and extracts relevant features.
+3. The trained machine learning model predicts the complaint category.
+4. Scam indicators and transaction details are used to calculate a risk score.
+5. The system provides relevant guidance and routes the complaint to the appropriate support team.
+6. Complaint details and analysis results are stored in MySQL.
+7. A support reviewer examines the prediction and corrects it when necessary.
+8. Only verified reviewer labels are eligible for use in the retraining process.
 
-## FinGuard categories
+## Important Limitations
 
-```text
-UPI_FRAUD
-OTP_SCAM
-FAKE_KYC
-PHISHING
-CARD_FRAUD
-UNAUTHORIZED_TRANSACTION
-REFUND_ISSUE
-PAYMENT_FAILURE
-ACCOUNT_ISSUE
-OTHER
-```
+The project is a prototype for complaint intelligence and risk assessment, not a production-ready fraud detection system. The CFPB dataset primarily represents US consumer complaints, while the synthetic records are designed to introduce Indian payment scenarios. The mapping between the original CFPB categories and FinGuard AI's categories is project-specific.
 
-The mapping from CFPB's original taxonomy to these categories is a project-specific labeling layer. It is not an official CFPB taxonomy.
-
-## Setup on Windows CMD
-
-### 1. Create and activate environment
-
-```cmd
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-Optional but recommended:
-
-```cmd
-python -m spacy download en_core_web_sm
-```
-
-The project still works with a lightweight tokenizer if the spaCy model is unavailable.
-
-### 2. Configure MySQL
-
-Edit `.env`:
-
-```text
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=your_password
-MYSQL_DATABASE=finguard_ai
-API_BASE_URL=http://127.0.0.1:8000
-```
-
-### 3. Rebuild the hybrid dataset
-
-The source file used by the script should be placed at:
-
-```text
-data/raw/cfpb_finguard_dataset.csv
-```
-
-Then run:
-
-```cmd
-python scripts\build_hybrid_dataset.py
-python scripts\prepare_data.py
-python scripts\split_data.py
-python app\ml\train_model.py
-python app\ml\evaluate_model.py
-```
-
-### 4. Initialize MySQL tables
-
-From the project root:
-
-```cmd
-python -m app.database.models
-```
-
-### 5. Start FastAPI
-
-```cmd
-uvicorn app.main:app --reload
-```
-
-API docs:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-### 6. Start customer application
-
-Open another CMD window, activate the environment and run:
-
-```cmd
-python -m streamlit run frontend\customer_app.py
-```
-
-### 7. Start support dashboard
-
-In another CMD window:
-
-```cmd
-python -m streamlit run frontend\team_dashboard.py
-```
-
-## Human-in-the-loop retraining
-
-The project intentionally does **not** retrain from an unverified customer prediction.
-
-```text
-New complaint
-     |
-     v
-ML prediction
-     |
-     v
-MySQL complaint record
-     |
-     v
-Human reviewer checks prediction
-     |
-     +---- correct/corrected label
-     |
-     v
-Verified feedback
-     |
-     v
-Retraining service
-     |
-     v
-complaint_classifier_v2.pkl
-     |
-     v
-Active model registry updated
-```
-
-## API endpoints
-
-- `GET /health`
-- `POST /analysis/analyze`
-- `POST /complaints`
-- `GET /complaints`
-- `GET /complaints/priority`
-- `GET /complaints/{complaint_id}`
-- `POST /feedback`
-- `GET /analytics/summary`
-
-## Limitations
-
-- CFPB data represents US consumer complaints and is not a statistical sample of all consumers.
-- The synthetic component is for coverage of project-specific scenarios and must not be presented as real customer data.
-- CFPB-to-FinGuard labels are a project-specific mapping and contain some unavoidable subjectivity.
-- The reported model metrics describe this hybrid benchmark, not production fraud detection.
-- A high risk score is decision support, not proof of fraud.
-- Human investigation remains the final authority for financial actions.
+Risk scores are intended to support human decision-making, not establish that fraud has occurred. Financial actions and final decisions should remain subject to appropriate human review.
