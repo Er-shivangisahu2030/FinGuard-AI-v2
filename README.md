@@ -234,10 +234,6 @@ complaint_classifier_v2.pkl
 Active model registry updated
 ```
 
-When a reviewer checks **Use verified label for retraining** in the dashboard, the API stores the feedback and retrains the classifier. The new model is saved as a versioned file and also promoted as the active model.
-
-This avoids the dangerous pattern of feeding the model's own unverified predictions back into training.
-
 ## API endpoints
 
 - `GET /health`
@@ -248,12 +244,6 @@ This avoids the dangerous pattern of feeding the model's own unverified predicti
 - `GET /complaints/{complaint_id}`
 - `POST /feedback`
 - `GET /analytics/summary`
-
-## Interview explanation
-
-A concise explanation is:
-
-> "I built FinGuard AI as a complaint-intelligence and risk-assessment system. Because real financial complaint data is sensitive and India-specific labeled fraud data is difficult to obtain, I used a hybrid dataset. The primary real component is public CFPB complaint narratives, while synthetic records supplement India-specific UPI, OTP and KYC scenarios. I keep the source field so the two data types remain auditable. The complaint text goes through spaCy preprocessing and TF-IDF, and I compared Logistic Regression, Linear SVM and Naive Bayes. A separate rule-based risk engine combines complaint category, scam indicators, transaction context and severity. Complaints are stored in MySQL and exposed through FastAPI and Streamlit. Finally, support staff can verify predictions, and only verified feedback is used to retrain a new version of the model."
 
 ## Limitations
 
